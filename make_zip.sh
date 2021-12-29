@@ -1,3 +1,7 @@
+# Compile the code into a zip to upload to a Roku device.
+# Pass the argument <base domain> to specify the domain of
+# your seedgarden server.
+
 if [ $# -ne 1 ]; then
     echo 'Usage: make_zip.sh <base domain>' >&2
     exit 1
