@@ -17,5 +17,7 @@ cp -r manifest source images components .out_dir
 sed -i "s/BASE_DOMAIN/$BASE_DOMAIN/g" .out_dir/components/*.xml
 
 rm -rf $OUTPUT_PATH
-zip -r $OUTPUT_PATH .out_dir/*
+cd .out_dir
+zip -r ../$OUTPUT_PATH *
+cd -
 rm -rf .out_dir

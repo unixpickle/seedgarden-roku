@@ -7,7 +7,14 @@
     <![CDATA[
 
     sub init()
+      m.state = "downloads"
+
       m.top.backgroundURI = "pkg:/images/rsgde_bg_hd.jpg"
+
+      m.labelList = m.top.findNode("downloadLabelList")
+      m.videoPlayer = m.top.findNode("videoPlayer")
+
+      m.top.removeChild(m.videoPlayer)
 
       m.readListTask = createObject("roSGNode", "DownloadListReader")
       m.readListTask.observeField("downloadList", "showDownloadList")
@@ -15,16 +22,82 @@
       m.readListTask.control = "RUN"
     end sub
 
-    sub showDownloadList()
-      labelList = m.top.findNode("downloadLabelList")
-      labelList.content = m.readListTask.downloadList
+    function onKeyEvent(key as String, press as Boolean) as Boolean
+      if press then
+        if key = "back" then
+          if m.state = "files" then
+            showDownloadList()
+            return true
+          else if m.state = "playing" then
+            stopPlaying()
+            return true
+          end if
+        else if key = "OK" then
+          itemSelected()
+          return true
+        end if
+      end if
+      return false
+    end function
 
-      rect = labelList.boundingRect()
+    sub itemSelected()
+      if m.state = "downloads"
+        hash = m.readListTask.downloadHashes[m.labelList.itemSelected]
+        m.readFilesTask = createObject("roSGNode", "FileListReader")
+        m.readFilesTask.observeField("fileList", "showFileList")
+        m.readFilesTask.hash = hash
+        m.readFilesTask.control = "RUN"
+      else if m.state = "files"
+        videoUrl = m.readFilesTask.fileUrls[m.labelList.itemSelected]
+        playVideo(videoUrl)
+      end if
+    end sub
+
+    sub showDownloadList()
+      m.state = "downloads"
+      showContent(m.readListTask.downloadList)
+    end sub
+
+    sub showFileList()
+      m.state = "files"
+      showContent(m.readFilesTask.fileList)
+    end sub
+
+    sub showContent(content)
+      m.labelList.content = content
+
+      rect = m.labelList.boundingRect()
       centerX = (1280 - rect.width) / 2
       centerY = (720 - rect.height) / 2
-      labelList.translation = [centerX, centerX]
+      m.labelList.translation = [centerX, centerX]
 
       m.top.setFocus(true)
+      m.labelList.setFocus(true)
+    end sub
+
+    sub playVideo(url)
+      m.state = "playing"
+
+      videoContent = createObject("RoSGNode", "ContentNode")
+      videoContent.url = url
+      videoContent.title = "File"
+      REM videoContent.streamformat = "mkv"
+
+      m.top.appendChild(m.videoPlayer)
+      m.top.removeChild(m.labelList)
+      m.videoPlayer.content = videoContent
+      m.videoPlayer.control = "play"
+      m.videoPlayer.setFocus(true)
+    end sub
+
+    sub stopPlaying()
+      m.state = "files"
+
+      m.videoPlayer.control = "stop"
+      m.top.removeChild(m.videoPlayer)
+      m.top.appendChild(m.labelList)
+      showFileList()
+      
     end sub
 
     ]]>
@@ -43,6 +116,8 @@
       </ContentNode>-->
 
     </LabelList>
+
+    <Video id="videoPlayer" />
 
   </children>
 

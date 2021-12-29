@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="FileListReader" extends="Task">
+  <interface>
+    <field id="hash" type="string" />
+    <field id="fileList" type="node" />
+    <field id="fileUrls" type="stringarray" />
+  </interface>
+  <script type="text/brightscript">
+    <![CDATA[
+
+    sub init()
+      m.top.functionName = "getContent"
+    end sub
+
+    sub getContent()
+      request = createObject("roUrlTransfer")
+      request.SetCertificatesFile("common:/certs/ca-bundle.crt")
+      request.AddHeader("X-Roku-Reserved-Dev-Id", "")
+      request.InitClientCertificates()
+      request.setUrl("https://BASE_DOMAIN/api/files?hash=" + m.top.hash)
+      response = parseJson(request.getToString())
+
+      fileList = createObject("RoSGNode", "ContentNode")
+      urls = createObject("roArray", response.Count(), false)
+      i = 0
+      for each file in response
+        entry = fileList.createChild("ContentNode")
+        entry.title = file["Path"]
+        urls[i] = "https://BASE_DOMAIN" + file["Link"]
+        i++
+      end for
+
+      m.top.fileUrls = urls
+      m.top.fileList = fileList
+    end sub
+
+    ]]>
+  </script>
+
+</component>

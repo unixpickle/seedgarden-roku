@@ -21,7 +21,7 @@
       response = parseJson(request.getToString())
 
       downloadList = createObject("RoSGNode", "ContentNode")
-      hashes = createObject("roArray", response.Count())
+      hashes = createObject("roArray", response.Count(), false)
       i = 0
       for each download in response
         entry = downloadList.createChild("ContentNode")
@@ -30,6 +30,7 @@
         i++
       end for
 
+      m.top.downloadHashes = hashes
       m.top.downloadList = downloadList
     end sub
 
