@@ -41,15 +41,17 @@
     end function
 
     sub itemSelected()
+      idx = m.labelList.itemSelected
       if m.state = "downloads"
-        hash = m.readListTask.downloadHashes[m.labelList.itemSelected]
+        hash = m.readListTask.downloadHashes[idx]
         m.readFilesTask = createObject("roSGNode", "FileListReader")
         m.readFilesTask.observeField("fileList", "showFileList")
         m.readFilesTask.hash = hash
         m.readFilesTask.control = "RUN"
       else if m.state = "files"
-        videoUrl = m.readFilesTask.fileUrls[m.labelList.itemSelected]
-        playVideo(videoUrl)
+        title = m.readFilesTask.fileList.getChild(idx).title
+        videoUrl = m.readFilesTask.fileUrls[idx]
+        playVideo(title, videoUrl)
       end if
     end sub
 
@@ -70,17 +72,15 @@
       centerX = (1280 - rect.width) / 2
       centerY = (720 - rect.height) / 2
       m.labelList.translation = [centerX, centerX]
-
-      m.top.setFocus(true)
       m.labelList.setFocus(true)
     end sub
 
-    sub playVideo(url)
+    sub playVideo(title, url)
       m.state = "playing"
 
       videoContent = createObject("RoSGNode", "ContentNode")
       videoContent.url = url
-      videoContent.title = "File"
+      videoContent.title = title
       REM videoContent.streamformat = "mkv"
 
       m.top.appendChild(m.videoPlayer)
