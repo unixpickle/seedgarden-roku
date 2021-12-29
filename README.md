@@ -1,6 +1,6 @@
 # seedgarden-roku
 
-This is an experimental Roku client for [seedgarden](https://github.com/unixpickle/seedgarden). This was the first (and probably last) Roku app I've created. I knew nothing about BrightScript before today, but I was able to hack something scrappy and functionl together in a matter of hours.
+This is an experimental Roku client for [seedgarden](https://github.com/unixpickle/seedgarden). This was the first (and probably last) Roku app I've created. I knew nothing about BrightScript before today, but I was able to hack something scrappy and functional together in a matter of hours.
 
 # What it does
 

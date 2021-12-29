@@ -106,7 +106,7 @@
 
   <children>
 
-    <LabelList id = "downloadLabelList" itemSize="[600,92]" />
+    <LabelList id="downloadLabelList" itemSize="[600,92]" />
     <Video id="videoPlayer" />
 
   </children>
