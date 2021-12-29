@@ -106,17 +106,7 @@
 
   <children>
 
-    <LabelList id = "downloadLabelList">
-
-      <!--<ContentNode role = "content" >
-        <ContentNode title = "Renderable Nodes" />
-        <ContentNode title = "Z-Order/Parent-Child" />
-        <ContentNode title = "Animations" />
-        <ContentNode title = "Events and Observers" />
-      </ContentNode>-->
-
-    </LabelList>
-
+    <LabelList id = "downloadLabelList" itemSize="[600,92]" />
     <Video id="videoPlayer" />
 
   </children>
