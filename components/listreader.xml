@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="DownloadListReader" extends="Task">
+  <interface>
+    <field id="downloadsUri" type="uri" />
+    <field id="downloadList" type="node" />
+    <field id="downloadHashes" type="stringarray" />
+  </interface>
+  <script type="text/brightscript">
+    <![CDATA[
+
+    sub init()
+      m.top.functionName = "getContent"
+    end sub
+
+    sub getContent()
+      request = createObject("roUrlTransfer")
+      request.SetCertificatesFile("common:/certs/ca-bundle.crt")
+      request.AddHeader("X-Roku-Reserved-Dev-Id", "")
+      request.InitClientCertificates()
+      request.setUrl(m.top.downloadsUri)
+      response = parseJson(request.getToString())
+
+      downloadList = createObject("RoSGNode", "ContentNode")
+      hashes = createObject("roArray", response.Count())
+      i = 0
+      for each download in response
+        entry = downloadList.createChild("ContentNode")
+        entry.title = download["Name"]
+        hashes[i] = download["Hash"]
+        i++
+      end for
+
+      m.top.downloadList = downloadList
+    end sub
+
+    ]]>
+  </script>
+
+</component>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<component name="MainScene" extends="Scene" initialFocus="downloadLabelList">
+
+  <script type="text/brightscript">
+
+    <![CDATA[
+
+    sub init()
+      m.top.backgroundURI = "pkg:/images/rsgde_bg_hd.jpg"
+
+      m.readListTask = createObject("roSGNode", "DownloadListReader")
+      m.readListTask.observeField("downloadList", "showDownloadList")
+      m.readListTask.downloadsUri = "https://BASE_DOMAIN/api/downloads"
+      m.readListTask.control = "RUN"
+    end sub
+
+    sub showDownloadList()
+      labelList = m.top.findNode("downloadLabelList")
+      labelList.content = m.readListTask.downloadList
+
+      rect = labelList.boundingRect()
+      centerX = (1280 - rect.width) / 2
+      centerY = (720 - rect.height) / 2
+      labelList.translation = [centerX, centerX]
+
+      m.top.setFocus(true)
+    end sub
+
+    ]]>
+
+  </script>
+
+  <children>
+
+    <LabelList id = "downloadLabelList">
+
+      <!--<ContentNode role = "content" >
+        <ContentNode title = "Renderable Nodes" />
+        <ContentNode title = "Z-Order/Parent-Child" />
+        <ContentNode title = "Animations" />
+        <ContentNode title = "Events and Observers" />
+      </ContentNode>-->
+
+    </LabelList>
+
+  </children>
+
+</component>
