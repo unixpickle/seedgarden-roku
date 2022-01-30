@@ -60,7 +60,7 @@
       showContent(m.readListTask.downloadList)
     end sub
 
-    sub showFileList()
+    sub showFileList(updated)
       m.state = "files"
       showContent(m.readFilesTask.fileList)
     end sub
@@ -96,8 +96,7 @@
       m.videoPlayer.control = "stop"
       m.top.removeChild(m.videoPlayer)
       m.top.appendChild(m.labelList)
-      showFileList()
-      
+      m.labelList.setFocus(true)
     end sub
 
     ]]>
