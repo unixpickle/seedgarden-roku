@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="TimestampSetter" extends="Task">
+  <interface>
+    <field id="baseURL" type="string" />
+    <field id="timestamp" type="float" />
+  </interface>
+  <script type="text/brightscript">
+    <![CDATA[
+
+    sub init()
+      m.top.functionName = "getContent"
+    end sub
+
+    sub getContent()
+      REM Str(number) has a leading space to displace a minus sign.
+      timeString = Mid(Str(m.top.timestamp), 2)
+
+      request = createObject("roUrlTransfer")
+      request.SetCertificatesFile("common:/certs/ca-bundle.crt")
+      request.AddHeader("X-Roku-Reserved-Dev-Id", "")
+      request.InitClientCertificates()
+      request.setUrl(m.top.baseURL + "&timestamp=" + timeString)
+      request.getToString()
+    end sub
+
+    ]]>
+  </script>
+
+</component>
