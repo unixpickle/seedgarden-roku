@@ -4,6 +4,9 @@
     <field id="hash" type="string" />
     <field id="fileList" type="node" />
     <field id="fileUrls" type="stringarray" />
+    <field id="timestamps" type="floatarray" />
+    <field id="timestampURLs" type="stringarray" />
+    <function name="updateTimestamp" />
   </interface>
   <script type="text/brightscript">
     <![CDATA[
@@ -22,17 +25,29 @@
 
       fileList = createObject("RoSGNode", "ContentNode")
       urls = createObject("roArray", response.Count(), false)
+      timestamps = createObject("roArray", response.Count(), false)
+      timestampURLs = createObject("roArray", response.Count(), false)
       i = 0
       for each file in response
         entry = fileList.createChild("ContentNode")
         entry.title = file["Path"]
         urls[i] = "https://BASE_DOMAIN" + file["Link"]
+        timestamps[i] = file["Timestamp"]
+        timestampURLs[i] = "https://BASE_DOMAIN" + file["SetTimestamp"]
         i++
       end for
 
       m.top.fileUrls = urls
+      m.top.timestamps = timestamps
+      m.top.timestampURLs = timestampURLs
       m.top.fileList = fileList
     end sub
+
+    function updateTimestamp(idx, ts)
+      timestamps = m.top.timestamps
+      timestamps[idx] = ts
+      m.top.timestamps = timestamps
+    end function
 
     ]]>
   </script>

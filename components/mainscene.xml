@@ -20,6 +20,10 @@
       m.readListTask.observeField("downloadList", "showDownloadList")
       m.readListTask.downloadsUri = "https://BASE_DOMAIN/api/downloads"
       m.readListTask.control = "RUN"
+
+      m.timestampURL = ""
+      m.videoPlayer.notificationInterval = 15.0
+      m.videoPlayer.observeField("position", "updateVideoTimestamp")
     end sub
 
     function onKeyEvent(key as String, press as Boolean) as Boolean
@@ -51,7 +55,9 @@
       else if m.state = "files"
         title = m.readFilesTask.fileList.getChild(idx).title
         videoUrl = m.readFilesTask.fileUrls[idx]
-        playVideo(title, videoUrl)
+        timestamp = m.readFilesTask.timestamps[idx]
+        timestampURL = m.readFilesTask.timestampURLs[idx]
+        playVideo(idx, title, videoUrl, timestamp, timestampURL)
       end if
     end sub
 
@@ -75,24 +81,42 @@
       m.labelList.setFocus(true)
     end sub
 
-    sub playVideo(title, url)
+    sub playVideo(fileIdx, title, url, timestamp, timestampURL)
       m.state = "playing"
+      m.playingFileIndex = fileIdx
+      m.timestampURL = timestampURL
 
       videoContent = createObject("RoSGNode", "ContentNode")
       videoContent.url = url
       videoContent.title = title
-      REM videoContent.streamformat = "mkv"
 
       m.top.appendChild(m.videoPlayer)
       m.top.removeChild(m.labelList)
       m.videoPlayer.content = videoContent
+      m.videoPlayer.seek = timestamp
       m.videoPlayer.control = "play"
       m.videoPlayer.setFocus(true)
+    end sub
+
+    sub updateVideoTimestamp()
+      if m.timestampURL <> ""
+        position = m.videoPlayer.position
+        m.updateTimestampTask = createObject("roSGNode", "TimestampSetter")
+        m.updateTimestampTask.baseURL = m.timestampURL
+        m.updateTimestampTask.timestamp = position
+        m.updateTimestampTask.control = "RUN"
+
+        REM if the user goes back to the files list, and then
+        REM starts playing this video again, it should resume
+        REM from the correct timestamp.
+        m.readFilesTask.callFunc("updateTimestamp", m.playingFileIndex, position)
+      end if
     end sub
 
     sub stopPlaying()
       m.state = "files"
 
+      m.timestampURL = ""
       m.videoPlayer.control = "stop"
       m.top.removeChild(m.videoPlayer)
       m.top.appendChild(m.labelList)
