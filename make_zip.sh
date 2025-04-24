@@ -14,7 +14,11 @@ rm -rf .out_dir
 mkdir .out_dir
 
 cp -r manifest source images components .out_dir
-sed -i "s/BASE_DOMAIN/$BASE_DOMAIN/g" .out_dir/components/*.xml
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  sed -i "" "s/BASE_DOMAIN/$BASE_DOMAIN/g" .out_dir/components/*.xml
+else
+  sed -i "s/BASE_DOMAIN/$BASE_DOMAIN/g" .out_dir/components/*.xml
+fi
 
 rm -rf $OUTPUT_PATH
 cd .out_dir
